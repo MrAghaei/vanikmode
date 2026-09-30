@@ -7,7 +7,7 @@ import { Price } from "@/components/ui/Price";
 // Replaced by the real landing page in Phase 4.
 export default function Home() {
   return (
-    <main className="flex flex-1 flex-col items-center gap-8 p-16">
+    <div className="flex flex-1 flex-col items-center gap-8 p-16">
       <p className="text-center text-lg">
         Landing page — built out in Phase 4. See{" "}
         <code className="rounded bg-black/5 px-1.5 py-0.5">tasks.md</code>.
@@ -33,6 +33,6 @@ export default function Home() {
           ]}
         />
       </div>
-    </main>
+    </div>
   );
 }

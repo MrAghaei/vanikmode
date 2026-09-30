@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Raw scrape of the source site — not our code, never linted.
+    "reference/**",
   ]),
 ]);
 

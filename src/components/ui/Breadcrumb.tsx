@@ -16,7 +16,13 @@ export type BreadcrumbProps = {
 // chevron points toward the previous (rightward) crumb.
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
   return (
-    <ol className={className ? `flex flex-wrap items-center gap-1 ${className}` : "flex flex-wrap items-center gap-1"}>
+    <ol
+      className={
+        className
+          ? `flex flex-wrap items-center gap-1 ${className}`
+          : "flex flex-wrap items-center gap-1"
+      }
+    >
       {items.map((item, index) => (
         <li key={item.href} className="flex items-center gap-1">
           {index > 0 && <ChevronLeft className="size-4" aria-hidden />}

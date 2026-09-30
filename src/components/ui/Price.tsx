@@ -16,7 +16,9 @@ export type PriceProps = {
 // the site's literal color choice.
 export function Price({ amount, originalAmount, className }: PriceProps) {
   return (
-    <div className={className ? `flex items-baseline gap-2 ${className}` : "flex items-baseline gap-2"}>
+    <div
+      className={className ? `flex items-baseline gap-2 ${className}` : "flex items-baseline gap-2"}
+    >
       {originalAmount !== undefined && (
         <span className="text-price-old text-base line-through">
           <span dir="ltr">{format(originalAmount)}</span>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 
 // Real font used by vanikmode.com ("site-font" / "Liana FD"). Commercial
 // font (fontiran.com) — kept local-only per the licensing decision in
@@ -27,8 +29,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fa" className={liana.variable}>
-      <body dir="rtl" className="min-h-full flex flex-col antialiased">
-        {children}
+      <body dir="rtl" className="min-h-full flex flex-col antialiased pb-16 nav:pb-0">
+        <Header />
+        <main className="flex flex-1 flex-col">{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -1,38 +1,57 @@
-import { Badge } from "@/components/ui/Badge";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { Button } from "@/components/ui/Button";
-import { Price } from "@/components/ui/Price";
+import { HeroCarousel } from "@/components/landing/HeroCarousel";
+import { CategoryGrid } from "@/components/landing/CategoryGrid";
+import { ProductRail } from "@/components/landing/ProductRail";
+import { BlogSection } from "@/components/landing/BlogSection";
+import { latestProducts, saleProducts, topwearProducts, bottomsProducts } from "@/data/products";
+import { externalUrl } from "@/lib/site";
 
-// Temporary Phase 2 preview of the ui/ primitives against real content.
-// Replaced by the real landing page in Phase 4.
+// Real page order (reference/html/landing.html): hero slider, category
+// grid, Latest Products, Special Sales, Topwear, Bottoms, Blog.
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col items-center gap-8 p-16">
-      <p className="text-center text-lg">
-        Landing page — built out in Phase 4. See{" "}
-        <code className="rounded bg-black/5 px-1.5 py-0.5">tasks.md</code>.
-      </p>
-
-      <div className="flex flex-col items-center gap-6 rounded-card border border-gray-5 p-8">
-        <div className="flex gap-4">
-          <Button variant="primary">ورود</Button>
-          <Button variant="outline">سبد خرید</Button>
-        </div>
-
-        <div className="relative w-64 overflow-hidden rounded-card bg-card-bg p-4 shadow-card">
-          <Badge />
-          <Price amount={1_398_000} originalAmount={1_698_000} />
-        </div>
-
-        <Breadcrumb
-          items={[
-            { label: "محصولات", href: "/products" },
-            { label: "ست زنانه", href: "/products/category/2" },
-            { label: "بالاپوش", href: "/products/category/3" },
-            { label: "شومیز شلوار", href: "/products/category/10" },
-          ]}
-        />
+    <>
+      <div className="mx-auto max-w-(--breakpoint-lg) px-4 pt-11 pb-9">
+        <HeroCarousel />
       </div>
-    </div>
+
+      <CategoryGrid />
+
+      <ProductRail
+        title="آخرین محصولات"
+        headingLevel="h2"
+        seeMoreHref={externalUrl("/products/")}
+        seeMoreLabel="همه محصولات"
+        products={latestProducts}
+        autoplayDelay={5000}
+      />
+
+      <ProductRail
+        title="فروش ویژه"
+        seeMoreHref={externalUrl("/products/onsale/")}
+        seeMoreLabel="همه محصولات"
+        seeMoreVariant="danger"
+        products={saleProducts}
+        autoplayDelay={6000}
+        onsale
+      />
+
+      <ProductRail
+        title="بالاپوش"
+        seeMoreHref={externalUrl("/products/category/3/topwear/")}
+        seeMoreLabel="همه محصولات"
+        products={topwearProducts}
+        autoplayDelay={6000}
+      />
+
+      <ProductRail
+        title="شلوار / دامن"
+        seeMoreHref={externalUrl("/products/category/4/women-bottoms/")}
+        seeMoreLabel="همه محصولات"
+        products={bottomsProducts}
+        autoplayDelay={6000}
+      />
+
+      <BlogSection />
+    </>
   );
 }

@@ -42,6 +42,3 @@ next-env.d.ts
 
 # raw scrape of the source site (HTML/CSS/images/fonts) — not part of the app
 /reference/
-
-# real Liana-FD font is a paid commercial font — local-only, see src/app/fonts/README.md
-/src/app/fonts/*.ttf

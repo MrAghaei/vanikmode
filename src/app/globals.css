@@ -1,15 +1,66 @@
 @import "tailwindcss";
 
-@theme inline {
+/*
+ * Design tokens transcribed from the live site (reference/content.md §12–13).
+ * Colors marked "verified" were read via getComputedStyle against the real
+ * rendered page; everything else comes from the site's own CSS source and
+ * should be spot-checked in Phase 6 if a component doesn't visually match.
+ */
+@theme {
   --font-sans: var(--font-liana), Tahoma, Arial, sans-serif;
+
+  /* Breakpoints — the live site is desktop-first (rules apply *below* these
+     widths via max-width media queries). Tailwind is mobile-first (min-width),
+     so components should be written mobile-default + md:/lg: overrides; the
+     resulting rendered breakpoints line up with the real site either way. */
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-nav: 941px; /* header logo swap point — not a CSS breakpoint on the real site, only an inline <picture> media query */
+  --breakpoint-lg: 1200px;
+
+  /* Primary action color — verified: real rendered CTA/login button background */
+  --color-primary: #ff8c55; /* --Foundation-Pantone-Normal */
+  --color-primary-darker: #82110c; /* verified: outline cart-button text color; also --Foundation-Pantone-Secondary */
+  --color-primary-dark: #972f29; /* source CSS only, likely a hover/active shade */
+  --color-on-primary: #fffdfd; /* verified: real rendered login-button text color, --Foundation-Forth-Light */
+
+  /* Secondary accent family (source CSS only, unverified usage) */
+  --color-accent-pink: #ff78c4; /* --Foundation-Primary-Normal */
+  --color-accent-pink-light: #fff2f9;
+  --color-accent-pink-hover: #ffebf6;
+  --color-accent-pink-active: #ffd5ed;
+  --color-accent-rose: #ff958b; /* --Foundation-Secondary-Normal */
+  --color-accent-rose-dark: #fda8a0;
+  --color-accent-rose-darker: #ffbab6;
+  --color-accent-peach: #ffae8b; /* --Foundation-Third-Normal */
+
+  /* Surfaces */
+  --color-body-bg: #ffffff;
+  --color-header-bg: #f5f5f5;
+  --color-footer-bg: #f0f0f0;
+  --color-card-bg: #fffdfd; /* verified: .product-box background */
+  --color-card-tint: #ffecec; /* --Foundation-Forth-Normal */
+
+  /* Grays */
+  --color-gray-2: #4f4f4f;
+  --color-gray-3: #828282;
+  --color-gray-5: #e0e0e0;
+  --color-gray-dark: #595353; /* --Foundation-Forth-Darker */
+
+  /* Price / status colors — verified: .product-price-main / .product-price-old */
+  --color-price: #219653; /* --Green-1 */
+  --color-price-old: #eb5757; /* --Red */
+  --color-green-light: #6fcf97; /* --Green-3, unverified usage */
+
+  /* "OFF" sale ribbon — verified in source CSS: .product-box-out-of-stock.off-ribbon */
+  --color-ribbon: #ff2929;
+
+  /* Card geometry — verified: .product-box */
+  --radius-card: 12px;
+  --shadow-card: 0 1px 4px -1px rgb(0 0 0 / 0.25);
 }
 
-/*
- * Full color-token / breakpoint theme (from reference/content.md §12–13)
- * is wired up in Phase 2 — this file intentionally stays minimal until then.
- */
-
 body {
-  background: #ffffff;
+  background: var(--color-body-bg);
   color: #000000;
 }

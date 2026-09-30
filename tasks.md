@@ -57,48 +57,49 @@ Before writing components, collect ground-truth assets so later phases don't blo
 - [x] Record exact computed spacing/sizing — **done for desktop via live browser (Claude in Chrome)**, see `reference/content.md` §13: real `getComputedStyle` values for the CTA color, container, RTL setup, product-box, prices, fonts, plus real screenshots of the mega-menu, footer, and hero slides that visually confirm §2–10. **Still open**: `resize_window` didn't actually change the rendered viewport in this session (stuck at ~1707px regardless of the requested size), so the 768/576/940px mobile/tablet behavior remains CSS-source-only, not verified against a real rendered mobile view — re-attempt in Phase 6 with real devtools device emulation or user-provided phone screenshots before finalizing mobile styles.
 - [x] Flagged rather than silently resolved: the Liana-FD font's commercial license (§ above), and two label/category-id inconsistencies on the live site itself (mobile menu uses shorter labels than the desktop mega-menu in a few spots; "هودی/سویشرت" and "دورس" both point at the same category id) — noted in `reference/content.md` §2 to replicate faithfully rather than "fix."
 
-## Phase 1 — Initialize the Next.js project (best practices & folder structure)
+## Phase 1 — Initialize the Next.js project (best practices & folder structure) ✅ DONE
 
-- [ ] `create-next-app` with TypeScript, App Router, ESLint, `src/` directory.
-- [ ] Choose and install the styling approach — Tailwind CSS (recommended, maps cleanly onto the scanned design-token list) configured with a `tailwind.config.ts` theme extension for the color tokens, font families, and breakpoints found above.
-- [ ] Folder structure (App Router):
+- [x] `create-next-app@latest` (Next.js 16.3.7) with TypeScript, App Router, ESLint, `src/` directory, Turbopack. Scaffolded into a scratch dir and merged in (create-next-app refuses a non-empty target dir; `reference/`, `tasks.md`, `.git` were already there).
+- [x] Styling: Tailwind **v4** (not v3) — installed by `create-next-app --tailwind` itself. **Correction to the original plan**: Tailwind v4 is CSS-first — there is no `tailwind.config.ts`. Theme tokens go in `@theme` blocks inside `src/app/globals.css` instead. The full color/typography/breakpoint token set from `reference/content.md` §12–13 is deferred to Phase 2 as planned; Phase 1 only wired the font variable through `@theme inline`.
+- [x] Folder structure created (App Router), matching the original plan with one path correction (fonts live under `src/app/fonts/`, not `public/fonts/` — colocating with the layout that loads them, per `next/font/local` convention):
   ```
   src/
     app/
-      layout.tsx            # <html lang="fa" dir="rtl">, global fonts/providers
-      page.tsx               # landing page
-      products/[slug]/page.tsx
+      layout.tsx                    # <html lang="fa">, <body dir="rtl">, Liana font — done
+      page.tsx                      # landing placeholder — real build is Phase 4
+      products/[slug]/page.tsx      # product placeholder — real build is Phase 5
       globals.css
-    components/
-      layout/                # Header, MegaMenu, MobileNav, Footer
-      landing/                # Hero, CategoryGrid, ProductSection, SaleSection, BlogSection
-      product/                # Gallery, VariantPicker, QtyStepper, SpecsTable, SizeGuide, RelatedProducts
-      ui/                     # Button, Badge, Price, Breadcrumb — generic/reusable
-    data/                     # typed content extracted from the live site (products.ts, categories.ts, blog.ts)
-    lib/                      # formatting helpers (Persian/Jalali dates, تومان price formatting, RTL utils)
-    types/                    # Product, Category, BlogPost, Variant, etc.
+      fonts/                        # Liana-FD .ttf files — gitignored, see fonts/README.md
+    components/{layout,landing,product,ui}/   # empty (.gitkeep), populated Phase 3–5
+    data/, lib/, types/                        # empty (.gitkeep), populated Phase 4–5
   public/
-    fonts/                    # self-hosted Liana-FD ttf files
-    images/                   # downloaded assets from Phase 0
+    images/{banner,category,product,blog,logo}/   # all real downloaded assets, self-hosted
   ```
-- [ ] Set up `next/font/local` for the Liana font family (all weights) and wire it into Tailwind's `fontFamily`. Copy the `.ttf` files from `reference/fonts/` into `public/fonts/` (or `src/app/fonts/`), then immediately add that font path to `.gitignore` — **per the licensing decision, the real font files must never be committed or deployed publicly.**
-- [ ] Configure `next.config.js` image domains/patterns if any images will be hotlinked instead of self-hosted (prefer self-hosting via `public/images` + `next/image` for pixel/perf control).
-- [ ] Prettier + ESLint config consistent with Next.js recommended rules; add `lint`/`format` scripts.
-- [ ] `tsconfig.json` path aliases (`@/components`, `@/data`, `@/lib`, etc.).
-- [ ] Git init + meaningful `.gitignore` (include `reference/` raw scrape dir **and** the copied `.ttf` font path under `public/`/`src/app/fonts/` — real commercial font, local-only per the licensing decision), initial commit.
-- [ ] README stub: project purpose, how to run, and a short note framing this as a Django→Next.js migration exercise (useful talking point for the interview).
+- [x] `next/font/local` wired for all 4 Liana weights (100–900 mapped across Light/Regular/Bold/Black) with `fallback: ['Tahoma','Arial','sans-serif']`, exposed as `--font-liana` → `--font-sans` in `@theme inline`.
+- [x] `next.config.ts`: added `images.remotePatterns` for `trustseal.enamad.ir` and `api.torob.com` (the two live-hotlinked trust badges from `reference/content.md` §10) — everything else is self-hosted from `public/images/`, no other remote patterns needed.
+- [x] Prettier (`.prettierrc.json`, `.prettierignore`) + `eslint-config-prettier` wired into `eslint.config.mjs`; `format`/`format:check` scripts added alongside the existing `lint` script.
+- [x] `tsconfig.json` path alias — `create-next-app` already sets up `@/*` → `./src/*`, which covers `@/components/...`, `@/data/...`, `@/lib/...`, `@/types/...` without needing separate per-folder aliases.
+- [x] `.gitignore` extended with `/reference/` and `/src/app/fonts/*.ttf` (verified via `git status`/`git add -A` before committing — neither is staged).
+- [x] README rewritten: project purpose, real "why Next.js over Django" talking points, run instructions (including the `cp reference/fonts/*.ttf src/app/fonts/` step needed since fonts aren't committed), folder structure, font-licensing note.
+- [x] Verified before committing: `npm run lint` clean, `npm run build` succeeds (`/` static, `/products/[slug]` dynamic), dev server returns HTTP 200 on both routes via `curl` from within the sandbox. Visual confirmation via browser wasn't possible — the Claude-in-Chrome extension controls the *user's* real browser, which can't reach this sandbox's `localhost:3000`; the user should run `npm run dev` locally to see it rendered.
+- [x] Removed `create-next-app`'s default boilerplate (Vercel/Next logos on the homepage, unused SVGs in `public/`) and its `prefers-color-scheme: dark` block in `globals.css` — the real site is light-only, no dark mode.
+- [x] `git init` was already done before this session started (repo exists with `origin` → `git@github.com:MrAghaei/vanikmode.git`, no prior commits) — made the initial commit (`d747a7e`) locally. **Not pushed to origin** — that needs a separate explicit go-ahead.
+- Note: `create-next-app` also generates `AGENTS.md`/`CLAUDE.md` pointing at `node_modules/next/dist/docs/` (Next.js's own "this version has breaking changes vs. your training data" notice, auto-managed by `next dev`) — left in place and worth actually reading before Phase 3+ route/data-fetching work, since this is Next 16 with some newer conventions (e.g. `params`/`searchParams` as Promises, the global `PageProps<'/route'>` / `LayoutProps<'/route'>` typed helpers used in `layout.tsx` and the product route already).
 
-## Phase 2 — Design tokens & global styles
+## Phase 2 — Design tokens & global styles ✅ DONE
 
-- [ ] Encode the verified color palette, spacing scale, and typography scale (weights 100–900, sizes used for h1/h2/body/price/etc.) into Tailwind theme / CSS variables.
-- [ ] Set `dir="rtl"` — **live-verified: the real site puts `dir="rtl"` on `<body>`, not `<html>`** (`<html>` computes as `ltr`). Match that (`<html lang="fa">` + `dir="rtl"` on the body/root layout wrapper) rather than defaulting to `dir="rtl"` on `<html>`. Verify Tailwind's logical properties (or the RTL plugin) behave correctly for margins/paddings/icons either way.
-- [ ] Build base primitives in `components/ui`: `Button`, `Price` (تومان formatter + strikethrough-original-price variant), `Badge` (sale %), `Breadcrumb`.
-- [ ] Verify against the live site at the confirmed breakpoint(s) (940px mobile switch, plus standard sm/md/lg/xl) before moving on.
+- [x] Encoded the verified color palette + card geometry + breakpoints into Tailwind v4's `@theme` block in `src/app/globals.css` (no `tailwind.config.ts` — see Phase 1's note on Tailwind v4 being CSS-first). Colors are namespaced (`--color-primary`, `--color-price`, `--color-ribbon`, etc.) rather than overriding Tailwind's built-in palette, with inline comments marking which values are live-verified vs. source-CSS-only. Breakpoints set to the real values: `sm:576px`, `md:768px`, `lg:1200px`, plus a one-off `nav:941px` for the header logo swap.
+- [x] `dir="rtl"` — already done in Phase 1's `layout.tsx` (`<body dir="rtl">`, not `<html>`), matching the live-verified fact.
+- [x] Built `components/ui/{Button,Price,Badge,Breadcrumb}.tsx`. Two things corrected from the original plan while building against real markup/CSS:
+  - `Badge` is not a generic "sale %" badge — the real site's percentage badge is HTML-commented-out/unused; the only badge that actually renders is a diagonal "OFF" ribbon (`.product-box-out-of-stock.off-ribbon` in source CSS: red `#FF2929`, 200px wide, rotated -45deg, `top:24px; left:-64px`). Built it as that exact ribbon, not a generic percentage badge.
+  - **Icon strategy decided**: the site uses a self-hosted Font Awesome icon font for every icon (chevrons, cart, search, user, heart, etc.) — asked the user, decision was `lucide-react` (modern tree-shakeable icon components) over re-hosting the FA webfont or hand-drawn SVGs. `Breadcrumb`'s separator uses `lucide-react`'s `ChevronLeft`. This applies to all icon usage in Phase 3+.
+  - `Price` mirrors the real markup exactly: amount always wrapped in `<span dir="ltr">` with `toLocaleString('en-US')` comma grouping + trailing "تومان", main price always green/`--color-price`, original price (when present) always red+line-through/`--color-price-old` — verified live, not a "green=cheap" convention, just the site's literal color choice.
+- [x] Verified by temporarily rendering all four primitives with real content (real prices, real breadcrumb chain) on the still-placeholder homepage, then: `npm run build` (custom utilities like `bg-primary`, `rounded-card`, `bg-ribbon`, `text-price` confirmed present in the compiled CSS, resolving to the right `--color-*`/`--radius-*` vars), `npm run lint` clean, dev server HTML fetched via `curl` and grepped for the expected classes. **Could not get a real browser screenshot** — same sandbox limitation as Phase 1 (Claude-in-Chrome drives the user's real browser, which can't reach this sandbox's `localhost`). The homepage placeholder currently *is* this primitives preview; Phase 4 replaces it with the real landing page.
 
 ## Phase 3 — Shared layout: Header, Mega Menu, Footer
 
 - [ ] `Header`: logo (desktop/mobile variants via `next/image` + `<picture>`-equivalent), login link, cart icon+count (static/demo state is fine since there's no real backend).
-- [ ] `MegaMenu`: all 6 top-level categories with their real sub-item lists (Sets/Topwear/Bottoms/Cold Season/Accessories + Special Sales/Blog/About/Contact/Size Guide).
+- [ ] `MegaMenu`: all 5 mega-menu columns with their real sub-item lists (Sets/Topwear/Bottoms/Cold Season/Accessories), plus the plain nav links (Home/Shop/Blog/About/Contact/Size Guide) and the mobile accordion's slightly different sub-labels (see `reference/content.md` §2).
 - [ ] `MobileNav`: hamburger/drawer behavior matching the site's mobile pattern below 940px.
 - [ ] `Footer`: About blurb, quick links, address/hours, phone numbers, ENAMAD + Torob trust badges (real badge images/links), copyright line.
 - [ ] Sanity-check every nav label and footer string against Phase 0 copy extraction — fix any mismatch before Phase 4.

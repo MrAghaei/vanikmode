@@ -33,11 +33,14 @@
   --color-accent-rose-dark: #fda8a0;
   --color-accent-rose-darker: #ffbab6;
   --color-accent-peach: #ffae8b; /* --Foundation-Third-Normal */
+  --color-coral: #ff6f61; /* active --Foundation-Primary-Normal: header-menu border, floating support button */
+  --color-coral-light: #ffc8c3; /* section-title / to-top arrow triangle */
 
   /* Surfaces */
   --color-body-bg: #ffffff;
   --color-header-bg: #f5f5f5;
   --color-footer-bg: #f0f0f0;
+  --color-input-bg: #e3e3e3; /* --input-gb-dark: header search */
   --color-card-bg: #fffdfd; /* verified: .product-box background */
   --color-card-tint: #ffecec; /* --Foundation-Forth-Normal */
 
@@ -63,4 +66,71 @@
 body {
   background: var(--color-body-bg);
   color: #000000;
+}
+
+/* `.container`: max-width 1200px centered, `margin: 0 25px` at ≤1200px. */
+@utility page-container {
+  width: 100%;
+  padding-inline: 25px;
+  @media (width >= 1200px) {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 0;
+  }
+}
+
+/*
+ * CKEditor HTML rendered from the live site (product description + popups).
+ * Scoped re-creation of the live site's element rules that Tailwind's
+ * preflight resets: `p`, `h1–h6 { margin: .5em 0 }`, the bordered tables
+ * from added.css, and unbulleted-but-indented lists.
+ */
+.rich-text p {
+  font-size: 16px;
+  margin-bottom: 16px;
+  overflow-wrap: break-word;
+}
+.rich-text :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0.5em 0;
+  font-weight: 700;
+}
+.rich-text h1 {
+  font-size: 2em;
+}
+.rich-text h2 {
+  font-size: 1.5em;
+}
+.rich-text h3 {
+  font-size: 1.17em;
+}
+.rich-text :is(strong, b) {
+  font-weight: 700;
+}
+.rich-text u {
+  text-decoration: underline;
+}
+.rich-text :is(ul, ol) {
+  padding-inline-start: 40px;
+}
+.rich-text li {
+  list-style: none;
+}
+.rich-text figure {
+  margin: 0;
+}
+.rich-text img {
+  max-width: 100%;
+  height: auto;
+}
+.rich-text :is(table, th, td) {
+  border: 2px solid #b5b3b3;
+  border-collapse: collapse;
+  padding: 10px;
+  text-align: center;
+}
+/* `.product-page-description .card p` */
+.rich-text-description p {
+  font-size: 14px;
+  line-height: 25px;
+  text-align: justify;
 }

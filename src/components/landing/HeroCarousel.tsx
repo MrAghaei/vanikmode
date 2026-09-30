@@ -1,118 +1,140 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { heroSlides } from "@/data/hero";
 import { cn } from "@/lib/cn";
+import { scrollTrackToChild } from "@/lib/horizontal-scroll";
+import { useSwipeToSlide } from "@/lib/use-drag-scroll";
 
-// Real site: header-slider Swiper autoplay delay 8000ms, pauseOnMouseEnter
-// (reference/js/script.js). Nav arrows + pagination dots verified in
-// reference/content.md §13 (screenshot) and the raw markup's
-// swiper-button-next/prev + swiper-pagination elements.
 const AUTOPLAY_DELAY = 8000;
+
+const slideClass =
+  "relative aspect-[1280/870] w-full min-w-full shrink-0 grow-0 basis-full snap-start";
+
+const arrowClass =
+  "absolute top-[calc(50%+22px)] flex size-6 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-gray-2";
 
 export function HeroCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
+  const indexRef = useRef(0);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const count = heroSlides.length;
 
-  // Scrolls the track directly via `scrollBy` rather than
-  // `Element.scrollIntoView` — the latter also scrolls ancestor scroll
-  // containers (i.e. the page) to satisfy its `block` alignment whenever the
-  // hero isn't fully within the viewport, which causes the whole page to jump.
-  const scrollToChild = (i: number) => {
-    const track = trackRef.current;
-    const el = track?.children[i] as HTMLElement | undefined;
-    if (!track || !el) return;
-    const delta = el.getBoundingClientRect().left - track.getBoundingClientRect().left;
-    track.scrollBy({ left: delta, behavior: "smooth" });
-  };
+  const goTo = useCallback(
+    (i: number) => {
+      const clamped = ((i % count) + count) % count;
+      indexRef.current = clamped;
+      setIndex(clamped);
+      const track = trackRef.current;
+      if (track) scrollTrackToChild(track, clamped);
+    },
+    [count],
+  );
 
-  const goTo = (i: number) => {
-    scrollToChild(i);
-    setIndex(i);
-  };
+  const handleSwipe = useCallback(
+    (direction: "next" | "prev" | null, startIndex: number) => {
+      const step = direction === "next" ? 1 : direction === "prev" ? -1 : 0;
+      goTo(startIndex + step);
+    },
+    [goTo],
+  );
+
+  useSwipeToSlide(trackRef, handleSwipe);
 
   useEffect(() => {
     if (paused) return;
     const id = setInterval(() => {
-      setIndex((prev) => {
-        const next = (prev + 1) % count;
-        scrollToChild(next);
-        return next;
-      });
+      goTo(indexRef.current + 1);
     }, AUTOPLAY_DELAY);
     return () => clearInterval(id);
-  }, [paused, count]);
+  }, [paused, goTo]);
 
-  // Keeps `index`/dots in sync when the visitor drags or swipes manually.
   const handleScroll = () => {
     const track = trackRef.current;
     if (!track) return;
     const width = track.clientWidth || 1;
     const nearest = Math.round(Math.abs(track.scrollLeft) / width);
-    setIndex(Math.min(Math.max(nearest, 0), count - 1));
+    const clamped = Math.min(Math.max(nearest, 0), count - 1);
+    indexRef.current = clamped;
+    setIndex(clamped);
   };
 
   return (
     <div
-      className="group relative overflow-hidden rounded-[18px]"
+      className="w-full"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div
-        ref={trackRef}
-        onScroll={handleScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {heroSlides.map((slide, i) => (
-          <Link
-            key={slide.image}
-            href={slide.href}
-            className="relative aspect-[1280/870] w-full shrink-0 snap-start"
-          >
-            <Image
-              src={`/images/banner/${slide.image}`}
-              alt={slide.alt}
-              fill
-              sizes="(min-width: 1200px) 1200px, 100vw"
-              className="object-cover"
-              priority={i === 0}
-            />
-          </Link>
-        ))}
+      <div className="relative">
+        <div
+          ref={trackRef}
+          onScroll={handleScroll}
+          className="flex cursor-grab snap-x snap-mandatory overflow-x-auto scroll-smooth select-none rounded-[18px] active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {heroSlides.map((slide, i) => {
+            const image = (
+              <Image
+                src={`/images/banner/${slide.image}`}
+                alt={slide.alt}
+                fill
+                draggable={false}
+                sizes="(min-width: 1200px) 1200px, 100vw"
+                className="rounded-[18px] object-cover"
+                priority={i === 0}
+              />
+            );
+
+            if (slide.href) {
+              return (
+                <Link key={slide.image} href={slide.href} className={slideClass} draggable={false}>
+                  {image}
+                </Link>
+              );
+            }
+
+            return (
+              <div key={slide.image} className={slideClass}>
+                {image}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Swiper RTL: "next" sits on the left, 25px in from each edge. */}
+        <button
+          type="button"
+          aria-label="Previous slide"
+          onClick={() => goTo(index - 1)}
+          className={cn(arrowClass, "right-[25px]")}
+        >
+          <ChevronRight className="size-3" strokeWidth={3} />
+        </button>
+        <button
+          type="button"
+          aria-label="Next slide"
+          onClick={() => goTo(index + 1)}
+          className={cn(arrowClass, "left-[25px]")}
+        >
+          <ChevronLeft className="size-3" strokeWidth={3} />
+        </button>
       </div>
 
-      <button
-        type="button"
-        aria-label="اسلاید قبلی"
-        onClick={() => goTo((index - 1 + count) % count)}
-        className="absolute inset-y-0 start-3 my-auto flex size-6 items-center justify-center rounded-full bg-white/80 text-gray-2 opacity-0 transition-opacity group-hover:opacity-100"
-      >
-        <ChevronRight className="size-3" />
-      </button>
-      <button
-        type="button"
-        aria-label="اسلاید بعدی"
-        onClick={() => goTo((index + 1) % count)}
-        className="absolute inset-y-0 end-3 my-auto flex size-6 items-center justify-center rounded-full bg-white/80 text-gray-2 opacity-0 transition-opacity group-hover:opacity-100"
-      >
-        <ChevronLeft className="size-3" />
-      </button>
-
-      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-2">
+      {/* Swiper's default bullets with `--swiper-pagination-color: #fff`: the active one is white. */}
+      <div className="mt-2.5 flex justify-center gap-2 md:mt-4">
         {heroSlides.map((slide, i) => (
           <button
             key={slide.image}
             type="button"
             aria-label={`اسلاید ${i + 1}`}
+            aria-current={i === index ? "true" : undefined}
             onClick={() => goTo(i)}
             className={cn(
               "size-2 rounded-full transition-colors",
-              i === index ? "bg-primary" : "bg-white/70",
+              i === index ? "bg-white" : "bg-black/20",
             )}
           />
         ))}

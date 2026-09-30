@@ -15,11 +15,11 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
   return (
     <>
       {open && (
-        <button aria-label="بستن" onClick={onClose} className="fixed inset-0 z-40 bg-black/40" />
+        <button aria-label="بستن" onClick={onClose} className="fixed inset-0 z-60 bg-black/40" />
       )}
       <div
         className={
-          "fixed inset-y-0 right-0 z-50 flex w-[440px] max-w-full flex-col bg-primary-darker p-6 text-white transition-transform" +
+          "fixed inset-y-0 right-0 z-70 flex w-[440px] max-w-full flex-col bg-primary-darker p-6 text-white transition-transform" +
           (open ? " translate-x-0" : " translate-x-full")
         }
       >

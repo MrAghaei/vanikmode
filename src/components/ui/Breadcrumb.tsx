@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/cn";
 
 export type BreadcrumbItem = {
   label: string;
@@ -11,22 +12,18 @@ export type BreadcrumbProps = {
   className?: string;
 };
 
-// Matches the real markup: every crumb is a link, separated by a
-// chevron-left icon (reference/content.md §11) — RTL reading order, so the
-// chevron points toward the previous (rightward) crumb.
+// Live `ol.breadcrumb`: 15px padding, 14px text, 8px radius, lavender
+// `--Foundation-Secondary-Light` background. Every crumb after the first
+// starts with an 8px chevron-left (8px margin each side) inside its link.
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
   return (
-    <ol
-      className={
-        className
-          ? `flex flex-wrap items-center gap-1 ${className}`
-          : "flex flex-wrap items-center gap-1"
-      }
-    >
+    <ol className={cn("flex flex-wrap rounded-lg bg-[#fcf7ff] p-[15px] text-sm", className)}>
       {items.map((item, index) => (
-        <li key={item.href} className="flex items-center gap-1">
-          {index > 0 && <ChevronLeft className="size-4" aria-hidden />}
-          <Link href={item.href}>{item.label}</Link>
+        <li key={item.href}>
+          <Link href={item.href} className="inline-flex items-center hover:underline">
+            {index > 0 && <ChevronLeft className="mx-2 size-2 stroke-4" aria-hidden />}
+            {item.label}
+          </Link>
         </li>
       ))}
     </ol>

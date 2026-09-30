@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fa" className={liana.variable}>
-      <body dir="rtl" className="min-h-full flex flex-col antialiased pb-16 nav:pb-0">
+      <body dir="rtl" className="min-h-full flex flex-col antialiased pt-[60px] md:pt-0">
         <Header />
         <main className="flex flex-1 flex-col">{children}</main>
         <Footer />

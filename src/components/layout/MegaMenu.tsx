@@ -19,7 +19,7 @@ export function MegaMenu() {
           </Link>
           <ul className="mt-3 flex flex-col gap-2 text-sm">
             {column.items.map((item) => (
-              <li key={item.href}>
+              <li key={item.label}>
                 <Link
                   href={item.href}
                   className={item.highlight ? "font-bold text-primary-darker" : "text-gray-2"}

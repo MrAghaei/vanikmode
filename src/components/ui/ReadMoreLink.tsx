@@ -22,7 +22,7 @@ export function ReadMoreLink({ href, label, variant = "primary", className }: Re
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-2 rounded-lg border border-transparent px-3 py-2 text-sm text-card-tint transition-colors hover:border-primary hover:bg-transparent hover:text-primary",
+        "flex min-h-[42px] items-center gap-2 rounded-lg border border-transparent px-3 py-2.5 text-sm text-card-tint transition-colors hover:border-primary hover:bg-transparent hover:text-primary",
         variant === "danger" ? "bg-ribbon" : "bg-primary",
         className,
       )}

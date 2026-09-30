@@ -10,7 +10,8 @@ import { externalUrl } from "@/lib/site";
 export default function Home() {
   return (
     <>
-      <div className="mx-auto max-w-(--breakpoint-lg) px-4 pt-11 pb-9">
+      {/* pt: the live site's always-empty `.story-bar` (25px) + `.section-slider` (42px). */}
+      <div className="page-container pt-[67px] pb-[59px]">
         <HeroCarousel />
       </div>
 
@@ -18,7 +19,7 @@ export default function Home() {
 
       <ProductRail
         title="آخرین محصولات"
-        headingLevel="h2"
+        variant="latest"
         seeMoreHref={externalUrl("/products/")}
         seeMoreLabel="همه محصولات"
         products={latestProducts}

@@ -1,3 +1,5 @@
+import { cn } from "@/lib/cn";
+
 function format(amount: number): string {
   return amount.toLocaleString("en-US");
 }
@@ -10,23 +12,26 @@ export type PriceProps = {
   className?: string;
 };
 
-// Mirrors the real markup: .product-price-main is always green, .product-price-old
-// is always red + line-through when present — verified via getComputedStyle
-// against the live site (reference/content.md §13). Not "green = cheaper", just
-// the site's literal color choice.
+// Mirrors the real `.product-box-price` markup: an (empty when not on sale)
+// .product-price-old, then .product-price-main pushed to the far end —
+// stacked and end-aligned below 768px (10px text), 14px text below 576px.
+// Main price is always green and the old price always red + line-through,
+// verified via getComputedStyle against the live site (reference/content.md
+// §13) — not "green = cheaper", just the site's literal color choice.
 export function Price({ amount, originalAmount, className }: PriceProps) {
   return (
     <div
-      className={className ? `flex items-baseline gap-2 ${className}` : "flex items-baseline gap-2"}
-    >
-      {originalAmount !== undefined && (
-        <span className="text-price-old text-base line-through">
-          <span dir="ltr">{format(originalAmount)}</span>
-        </span>
+      className={cn(
+        "flex justify-between text-base max-md:flex-col max-md:items-end max-md:text-[10px] max-sm:text-sm",
+        className,
       )}
-      <span className="text-price text-base">
+    >
+      <div className="text-price-old line-through">
+        {originalAmount !== undefined && <span dir="ltr">{format(originalAmount)}</span>}
+      </div>
+      <div className="ms-auto text-price">
         <span dir="ltr">{format(amount)}</span> تومان
-      </span>
+      </div>
     </div>
   );
 }

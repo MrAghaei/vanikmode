@@ -4,6 +4,7 @@ import { blogPosts } from "@/data/blog";
 import { externalUrl } from "@/lib/site";
 import { Rail } from "@/components/ui/Rail";
 import { ReadMoreLink } from "@/components/ui/ReadMoreLink";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 
 // `.section-latest-news` / `.news-box` — real Swiper: slidesPerView 1.5 /
 // 2 (≥768px) / 3 (≥1000px), spaceBetween 24, autoplay 7000ms
@@ -12,17 +13,22 @@ import { ReadMoreLink } from "@/components/ui/ReadMoreLink";
 // category-tag label on the image, title, author, date).
 export function BlogSection() {
   return (
-    <section className="mx-auto max-w-(--breakpoint-lg) px-4 py-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-base font-black">بلاگ</h2>
+    <section className="page-container pt-6 pb-24 max-sm:px-0">
+      <div className="mb-6 flex items-center justify-between max-sm:px-[25px]">
+        <SectionTitle>بلاگ</SectionTitle>
         <ReadMoreLink href={externalUrl("/blog/")} label="مشاهده همه" />
       </div>
 
-      <Rail count={blogPosts.length} autoplayDelay={7000} className="gap-6 pb-4">
+      <Rail
+        count={blogPosts.length}
+        autoplayDelay={7000}
+        hideScrollbar
+        className="scroll-px-2.5 gap-6 p-2.5"
+      >
         {blogPosts.map((post) => (
           <div
             key={post.href}
-            className="w-[66.6667%] shrink-0 snap-start md:w-1/2 min-[1000px]:w-1/3"
+            className="w-[calc((100%-12px)/1.5)] shrink-0 snap-start md:w-[calc((100%-24px)/2)] min-[1000px]:w-[calc((100%-3rem)/3.2)]"
           >
             <Link
               href={post.href}

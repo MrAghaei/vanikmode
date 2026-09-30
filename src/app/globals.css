@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-liana), Tahoma, Arial, sans-serif;
+}
+
+/*
+ * Full color-token / breakpoint theme (from reference/content.md §12–13)
+ * is wired up in Phase 2 — this file intentionally stays minimal until then.
+ */
+
+body {
+  background: #ffffff;
+  color: #000000;
+}
